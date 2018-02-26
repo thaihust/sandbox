@@ -63,3 +63,5 @@ Visit `http:localhost:8888` and click the host to see your dashboard, then check
 ```sh
 echo "10.10.0.149 influxdb" >> /etc/hosts
 ```
+
+- Run telegraf agent on target servers: `docker-compose -f telegraf.yml up -d`
