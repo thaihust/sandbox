@@ -1,0 +1,70 @@
+version: '2'
+services:
+  grafana:
+    image: grafana/grafana:4.6.3
+    volumes:
+      - /var/lib/grafana:/var/lib/grafana
+      - /var/log/grafana:/var/log/grafana
+      - /etc/localtime:/etc/localtime
+    ports:
+      - "3000:3000"
+    environment: 
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD}
+    depends_on:
+      - kapacitor
+      - influxdb
+      - telegraf
+    network_mode: "host"
+  chronograf:
+    # Full tag list: https://hub.docker.com/r/library/chronograf/tags/
+    image: quay.io/influxdb/chronograf:1.4.0.1
+    volumes:
+      # Mount for chronograf database
+      - ./chronograf/data/:/var/lib/chronograf/
+    ports:
+      # The WebUI for Chronograf is served on port 8888
+      - "8888:8888"
+    depends_on:
+      - kapacitor
+      - influxdb
+      - telegraf
+    network_mode: "host"
+  telegraf:
+    # Full tag list: https://hub.docker.com/r/library/telegraf/tags/
+    image: telegraf:1.5.2
+    environment:
+      - HOSTNAME=${HOSTNAME}
+    # Telegraf requires network access to InfluxDB
+    volumes:
+      # Mount for telegraf configuration
+      - ./telegraf/:/etc/telegraf/
+      # Mount for Docker API access
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - influxdb
+    network_mode: "host"
+  influxdb:
+    # Full tag list: https://hub.docker.com/r/library/influxdb/tags/
+    image: influxdb:1.4.3
+    volumes:
+      # Mount for influxdb data directory
+      - ./influxdb/data:/var/lib/influxdb
+      # Mount for influxdb configuration
+      - ./influxdb/config/:/etc/influxdb/
+    ports:
+      # The API for InfluxDB is served on port 8086
+      - "8086:8086"
+    network_mode: "host"
+  kapacitor:
+    # Full tag list: https://hub.docker.com/r/library/kapacitor/tags/
+    image: kapacitor:1.4.0
+    volumes:
+      # Mount for kapacitor data directory
+      - ./kapacitor/data/:/var/lib/kapacitor
+      # Mount for kapacitor configuration
+      - ./kapacitor/config/:/etc/kapacitor/
+    # Kapacitor requires network access to Influxdb
+    ports:
+      # The API for Kapacitor is served on port 9092
+      - "9092:9092"
+    network_mode: "host"
