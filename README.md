@@ -55,3 +55,11 @@ Visit `http:localhost:8888` and click the host to see your dashboard, then check
 >
 
 ![Dashboard](./documentation/static/images/sandbox_dashboard.jpg)
+
+# Private notes
+
+- Update `influxdb` ip to `/etc/hosts` (to ressolv influxdb host when running telegraf at the network_mode=host)
+
+```sh
+echo "10.10.0.149 influxdb" >> /etc/hosts
+```

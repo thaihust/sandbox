@@ -1,0 +1,13 @@
+version: '2'
+services:
+  telegraf:
+    # Full tag list: https://hub.docker.com/r/library/telegraf/tags/
+    image: telegraf:1.5.2
+    environment:
+      - HOSTNAME=${HOSTNAME}
+    volumes:
+      # Mount for telegraf configuration
+      - ./telegraf/:/etc/telegraf/
+      # Mount for Docker API access
+      - /var/run/docker.sock:/var/run/docker.sock
+    network_mode: "host"
