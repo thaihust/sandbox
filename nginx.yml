@@ -1,0 +1,16 @@
+version: '2'
+services:
+  nginx:
+    container_name: nginx
+    build: nginx/
+    ports:
+      - '8000:8000'
+      - '8001:8001'
+      - '8002:8002'
+      - '8003:8003'
+    logging:
+      driver: 'fluentd'
+      options:
+        fluentd-address: fluentd:24224
+        tag: docker.{{.FullID}}
+    network_mode: 'host'
